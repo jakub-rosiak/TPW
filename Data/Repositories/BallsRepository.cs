@@ -18,5 +18,10 @@ namespace Data
         {
             return _balls;
         }
+
+        public void Clear()
+        {
+            _balls.Clear();
+        }
     }
 }

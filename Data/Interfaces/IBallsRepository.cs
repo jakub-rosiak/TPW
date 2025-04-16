@@ -5,5 +5,6 @@ namespace Data
         void AddBall(Ball ball);
         void RemoveBall(Ball ball);
         IEnumerable<Ball> GetAllBalls();
+        void Clear();
     }
 }

@@ -2,8 +2,8 @@
 
 public class Board : IBoard
 {
-    public double Width { get; }
-    public double Height { get; }
+    public double Width { get; set; }
+    public double Height { get; set; }
 
     public Board(double width, double height)
     {
