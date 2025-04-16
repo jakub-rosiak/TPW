@@ -13,6 +13,7 @@ public class MainViewModel : INotifyPropertyChanged
 {
     private IBallSimulationModel _model;
 
+    public BoardDisplay Board { get; }
     public IBallSimulationModel Model
     {
         get => _model;
@@ -49,6 +50,8 @@ public class MainViewModel : INotifyPropertyChanged
     public MainViewModel()
     {
         _model = new BallSimulationModel();
+        
+        Board = new BoardDisplay(800, 600);
         
         _createBallsCommand = new RelayCommand(_ =>
         {
