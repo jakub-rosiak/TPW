@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Logic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Model;
 using Model.Models;
 
