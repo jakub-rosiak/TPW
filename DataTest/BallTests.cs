@@ -58,5 +58,20 @@ namespace DataTest
             Assert.AreEqual(20, _ball.XPos);
             Assert.AreEqual(40, _ball.YPos);
         }
+        
+        [TestMethod]
+        public void AddForce_ShouldAccumulateVelocityCorrectly()
+        {
+            // Arrange
+            var ball = new Ball(0, 0, 1, 1);
+            
+            // Act
+            ball.AddForce(5, 5);
+            ball.AddForce(2, 3); // Expected velocity: 1+5+2, 1+5+3
+            
+            // Assert
+            Assert.AreEqual(8, ball.XVel);
+            Assert.AreEqual(9, ball.YVel);
+        }
     }
 }
