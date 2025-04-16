@@ -4,9 +4,51 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
+        xmlns:viewModel="clr-namespace:ViewModel;assembly=ViewModel"
+        xmlns:models="clr-namespace:Model.Models;assembly=Model"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
+    <Window.DataContext>
+        <viewModel:MainViewModel>
+            <viewModel:MainViewModel.Model>
+                <models:BallSimulationModel />
+            </viewModel:MainViewModel.Model>
+        </viewModel:MainViewModel>
+    </Window.DataContext>
+    
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <TextBlock Text="Number of Balls:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBox Width="50" Text="{Binding BallCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button Content="Create Balls" Command="{Binding CreateBallsCommand}" Width="100" Margin="0,0,10,0"/>
+            <Button Content="Start" Command="{Binding StartSimulationCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Stop" Command="{Binding StopSimulationCommand}" Width="80" Margin="0,0,10,0"/>
+        </StackPanel>
+        
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2" Margin="10">
+            <ItemsControl ItemsSource="{Binding Balls}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="ForestGreen" Width="800" Height="600"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="White" Stroke="Black" StrokeThickness="1"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding XPos}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding YPos}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+        </Border>
     </Grid>
 </Window>
