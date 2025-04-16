@@ -4,7 +4,7 @@ using Logic;
 namespace LogicTest
 {
     [TestClass]
-    public sealed class BallMovedEventArgsTest
+    public sealed class BallMovedEventArgsTests
     {
         [TestMethod]
         public void Constructor_WhenBallMovedEventArgsIsCreated_ShouldInitializeValuesCorrectly()
