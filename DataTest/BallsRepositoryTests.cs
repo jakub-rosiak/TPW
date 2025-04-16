@@ -60,5 +60,20 @@ namespace DataTests
             Assert.IsTrue(allBalls.Contains(ball1));
             Assert.IsTrue(allBalls.Contains(ball2));
         }
+        
+        [TestMethod]
+        public void Clear_ShouldRemoveAllBalls()
+        {
+            // Arrange
+            IBallsRepository repository = new BallsRepository();
+            repository.AddBall(new Ball(0, 0, 0, 0));
+            repository.AddBall(new Ball(5, 5, 1, 1));
+
+            // Act
+            repository.Clear();
+
+            // Assert
+            Assert.AreEqual(0, repository.GetAllBalls().Count());
+        }
     }
 }
