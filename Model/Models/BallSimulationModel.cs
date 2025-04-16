@@ -8,19 +8,21 @@ namespace Model.Models;
 public class BallSimulationModel : IBallSimulationModel
 {
     private readonly IBallLogic _logic;
+    private readonly Board _board;
     public ObservableCollection<BallDisplay> Balls { get; } = new();
 
     public event EventHandler? BallsChanged;
 
     public BallSimulationModel()
     {
-        _logic = new BallLogic(new BallsRepository());
+        _board = new Board(800, 600);
+        _logic = new BallLogic(new BallsRepository(), new Board(800, 600));
         _logic.BallMoved += OnBallMoved;
     }
     
     public void CreateBalls(int count)
     {
-        _logic.CreateBalls(count, 800, 600);
+        _logic.CreateBalls(count);
         Balls.Clear();
         foreach (var ball in _logic.GetBalls())
         {
@@ -31,6 +33,7 @@ public class BallSimulationModel : IBallSimulationModel
 
     public void StartSimulation(double intervalMilliseconds)
     {
+        Console.WriteLine("Starting simulation");
         _logic.Start(intervalMilliseconds);
     }
 
@@ -45,4 +48,5 @@ public class BallSimulationModel : IBallSimulationModel
             ball.YPos = e.NewY;
         }
     }
+
 }
