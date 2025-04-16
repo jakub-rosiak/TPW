@@ -1,6 +1,6 @@
 using Data;
 using System;
-using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace Logic
 {
@@ -21,7 +21,7 @@ namespace Logic
             {
                 double xPos = _random.NextDouble() * (width - 2 * Ball.Radius);
                 double yPos = _random.NextDouble() * (height - 2 * Ball.Radius);
-                double xVel = _random.NextDouble() * 10 - 5;  // some random velocity
+                double xVel = _random.NextDouble() * 10 - 5;
                 double yVel = _random.NextDouble() * 10 - 5;
 
                 var ball = new Ball(xPos + Ball.Radius, yPos + Ball.Radius, xVel, yVel);
@@ -35,7 +35,6 @@ namespace Logic
             {
                 ball.Move(deltaTime);
 
-                // Boundary checks (simple elastic collision)
                 if (ball.XPos < Ball.Radius || ball.XPos > width - Ball.Radius)
                 {
                     ball.AddForce(-2 * ball.XVel, 0); 
