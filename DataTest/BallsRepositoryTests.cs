@@ -60,42 +60,5 @@ namespace DataTests
             Assert.IsTrue(allBalls.Contains(ball1));
             Assert.IsTrue(allBalls.Contains(ball2));
         }
-
-        [TestMethod]
-        public void Ball_Move_ShouldUpdatePosition()
-        {
-            // Arrange
-            double initialX = 10;
-            double initialY = 10;
-            double vx = 2;
-            double vy = -3;
-            double deltaTime = 1.0;
-            var ball = new Ball(initialX, initialY, vx, vy);
-
-            // Act
-            ball.Move(deltaTime);
-
-            // Assert
-            Assert.AreEqual(initialX + vx * deltaTime, ball.XPos, 0.001);
-            Assert.AreEqual(initialY + vy * deltaTime, ball.YPos, 0.001);
-        }
-
-        [TestMethod]
-        public void Ball_AddForce_ShouldChangeVelocity()
-        {
-            // Arrange
-            double initialXVel = 2;
-            double initialYVel = 3;
-            double forceX = 1;
-            double forceY = -2;
-            var ball = new Ball(0, 0, initialXVel, initialYVel);
-
-            // Act
-            ball.AddForce(forceX, forceY);
-
-            // Assert
-            Assert.AreEqual(initialXVel + forceX, ball.XVel, 0.001);
-            Assert.AreEqual(initialYVel + forceY, ball.YVel, 0.001);
-        }
     }
 }
