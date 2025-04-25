@@ -1,13 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using Data;
-using Logic;
-using Model;
+using ViewModel.Commands;
 using Model.Interfaces;
 using Model.Models;
 
-namespace ViewModel;
+namespace ViewModel.ViewModels;
 
 public class MainViewModel : INotifyPropertyChanged
 {
@@ -53,6 +51,9 @@ public class MainViewModel : INotifyPropertyChanged
         
         Board = new BoardDisplay(800, 600);
         
+        _startSimulationCommand = new RelayCommand(_ => _model.StartSimulation(), _ => Balls.Any());
+        _stopSimulationCommand = new RelayCommand(_ => _model.StopSimulation(), _ => Balls.Any());
+        
         _createBallsCommand = new RelayCommand(_ =>
         {
             _model.CreateBalls(BallCount);
@@ -60,8 +61,6 @@ public class MainViewModel : INotifyPropertyChanged
             _stopSimulationCommand.RaiseCanExecuteChanged();
         }, _ => BallCount > 0);
         
-        _startSimulationCommand = new RelayCommand(_ => _model.StartSimulation(1), _ => Balls.Any());
-        _stopSimulationCommand = new RelayCommand(_ => _model.StopSimulation(), _ => Balls.Any());
         _ballCount = 5;
     }
     

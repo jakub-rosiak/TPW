@@ -1,10 +1,10 @@
-namespace Data
+namespace Data.Interfaces
 {
     public interface IBallsRepository
     {
-        void AddBall(Ball ball);
-        void RemoveBall(Ball ball);
-        IEnumerable<Ball> GetAllBalls();
+        void AddBall(IBall ball);
+        void RemoveBall(IBall ball);
+        IEnumerable<IBall> GetAllBalls();
         void Clear();
     }
 }

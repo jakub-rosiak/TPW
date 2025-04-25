@@ -1,9 +1,8 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-using Data;
+using Data.Interfaces;
+using Data.Models;
+using Data.Repositories;
 
-namespace DataTests
+namespace DataTest
 {
     [TestClass]
     public class BallsRepositoryTests
@@ -13,7 +12,7 @@ namespace DataTests
         {
             // Arrange
             IBallsRepository repository = new BallsRepository();
-            var ball = new Ball(10, 10, 1, 1);
+            var ball = new Ball(10, 10, 1, 1, 10);
 
             // Act
             repository.AddBall(ball);
@@ -27,8 +26,8 @@ namespace DataTests
         {
             // Arrange
             IBallsRepository repository = new BallsRepository();
-            var ball1 = new Ball(10, 10, 1, 1);
-            var ball2 = new Ball(20, 20, 2, 2);
+            var ball1 = new Ball(10, 10, 1, 1, 10);
+            var ball2 = new Ball(20, 20, 2, 2, 10);
 
             repository.AddBall(ball1);
             repository.AddBall(ball2);
@@ -46,8 +45,8 @@ namespace DataTests
         {
             // Arrange
             IBallsRepository repository = new BallsRepository();
-            var ball1 = new Ball(10, 10, 1, 1);
-            var ball2 = new Ball(20, 20, 2, 2);
+            var ball1 = new Ball(10, 10, 1, 1, 10);
+            var ball2 = new Ball(20, 20, 2, 2, 10);
 
             repository.AddBall(ball1);
             repository.AddBall(ball2);
@@ -66,8 +65,8 @@ namespace DataTests
         {
             // Arrange
             IBallsRepository repository = new BallsRepository();
-            repository.AddBall(new Ball(0, 0, 0, 0));
-            repository.AddBall(new Ball(5, 5, 1, 1));
+            repository.AddBall(new Ball(0, 0, 0, 0, 10));
+            repository.AddBall(new Ball(5, 5, 1, 1, 10));
 
             // Act
             repository.Clear();

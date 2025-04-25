@@ -1,4 +1,4 @@
-﻿using ViewModel;
+﻿using ViewModel.Commands;
 
 namespace ViewModelTest
 {

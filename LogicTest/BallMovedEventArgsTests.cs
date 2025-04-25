@@ -1,4 +1,4 @@
-﻿using Logic;
+﻿using Logic.Events;
 
 namespace LogicTest
 {

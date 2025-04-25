@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using Model;
+using Model.Models;
 using Model.Interfaces;
-using ViewModel;
+using ViewModel.ViewModels;
 
 namespace ViewModelTest
 {
@@ -116,10 +116,10 @@ namespace ViewModelTest
                 BallsChanged?.Invoke(this, EventArgs.Empty);
             }
 
-            public void StartSimulation(double interval)
+            public void StartSimulation()
             {
                 StartCalls++;
-                LastInterval = interval;
+                LastInterval = 1;
             }
 
             public void StopSimulation()

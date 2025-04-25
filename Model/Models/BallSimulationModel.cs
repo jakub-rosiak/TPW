@@ -1,7 +1,10 @@
 ﻿using System.Collections.ObjectModel;
-using Data;
+using Data.Models;
+using Data.Repositories;
 using Model.Interfaces;
-using Logic;
+using Logic.Interfaces;
+using Logic.Services;
+using Logic.Events;
 
 namespace Model.Models;
 
@@ -26,15 +29,15 @@ public class BallSimulationModel : IBallSimulationModel
         Balls.Clear();
         foreach (var ball in _logic.GetBalls())
         {
-            Balls.Add(new BallDisplay(ball.Id, ball.XPos, ball.YPos, ball.Radius));
+            Balls.Add(new BallDisplay(ball.Id, ball.XPos - ball.Radius, ball.YPos - ball.Radius, ball.Radius));
         }
         BallsChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public void StartSimulation(double intervalMilliseconds)
+    public void StartSimulation()
     {
         Console.WriteLine("Starting simulation");
-        _logic.Start(intervalMilliseconds);
+        _logic.Start();
     }
 
     public void StopSimulation() => _logic.Stop();
@@ -44,8 +47,8 @@ public class BallSimulationModel : IBallSimulationModel
         var ball = Balls.FirstOrDefault(b => b.Id == e.BallId);
         if (ball != null)
         {
-            ball.XPos = e.NewX;
-            ball.YPos = e.NewY;
+            ball.XPos = e.NewX - ball.Radius;
+            ball.YPos = e.NewY - ball.Radius;
         }
     }
 

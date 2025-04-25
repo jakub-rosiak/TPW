@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
-using Data;
-using Logic;
+using Data.Repositories;
+using Data.Models;
+using Logic.Services;
+using Logic.Events;
 
-namespace LogicTests
+namespace LogicTest
 {
     [TestClass]
     public class BallLogicTests
@@ -40,7 +42,7 @@ namespace LogicTests
             logic.CreateBalls(1);
             var count = 0;
             logic.BallMoved += (_, __) => Interlocked.Increment(ref count);
-            logic.Start(10);
+            logic.Start();
             Thread.Sleep(60);
             logic.Stop();
             Assert.IsTrue(count > 0);
@@ -53,7 +55,7 @@ namespace LogicTests
             logic.CreateBalls(1);
             var count = 0;
             logic.BallMoved += (_, __) => Interlocked.Increment(ref count);
-            logic.Start(10);
+            logic.Start();
             Thread.Sleep(50);
             logic.Stop();
             var afterStop = count;

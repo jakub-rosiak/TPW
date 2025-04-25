@@ -1,20 +1,22 @@
-namespace Data
+using Data.Interfaces;
+
+namespace Data.Repositories
 {
     public class BallsRepository : IBallsRepository
     {
-        private readonly List<Ball> _balls = new();
+        private readonly List<IBall> _balls = new();
 
-        public void AddBall(Ball ball)
+        public void AddBall(IBall ball)
         {
             _balls.Add(ball);
         }
 
-        public void RemoveBall(Ball ball)
+        public void RemoveBall(IBall ball)
         {
             _balls.Remove(ball);
         }
 
-        public IEnumerable<Ball> GetAllBalls()
+        public IEnumerable<IBall> GetAllBalls()
         {
             return _balls;
         }

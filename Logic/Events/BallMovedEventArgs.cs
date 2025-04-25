@@ -1,4 +1,4 @@
-﻿namespace Logic;
+﻿namespace Logic.Events;
 
 public class BallMovedEventArgs : EventArgs
 {

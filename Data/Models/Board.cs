@@ -1,4 +1,6 @@
-﻿namespace Data;
+﻿using Data.Interfaces;
+
+namespace Data.Models;
 
 public class Board : IBoard
 {

@@ -2,6 +2,7 @@
 using Logic;
 using Model;
 using Model.Models;
+using Logic.Events;
 
 namespace ModelTest
 {
@@ -52,7 +53,7 @@ namespace ModelTest
         [TestMethod]
         public void StartSimulation_And_StopSimulation_ShouldNotThrow()
         {
-            _model.StartSimulation(100);
+            _model.StartSimulation();
             _model.StopSimulation();
         }
 
@@ -66,8 +67,8 @@ namespace ModelTest
             var mi = typeof(BallSimulationModel)
                      .GetMethod("OnBallMoved", BindingFlags.Instance | BindingFlags.NonPublic);
             mi.Invoke(_model, new object?[] { null, new BallMovedEventArgs(ball.Id, newX, newY) });
-            Assert.AreEqual(newX, ball.XPos);
-            Assert.AreEqual(newY, ball.YPos);
+            Assert.AreEqual(newX - ball.Radius, ball.XPos);
+            Assert.AreEqual(newY - ball.Radius, ball.YPos);
         }
 
         [TestMethod]
