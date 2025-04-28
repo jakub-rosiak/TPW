@@ -34,59 +34,58 @@ namespace Logic.Services
             }
         }
         
-        public void UpdatePositions(double deltaTime)
+        public async Task UpdatePositionsAsync(double deltaTime)
         {
-            foreach (var ball in repository.GetAllBalls())
+            var tasks = new List<Task>();
+
+            foreach (var b1 in repository.GetAllBalls())
             {
-                //double dx = _random.NextDouble() * 10 - 5;
-                //double dy = _random.NextDouble() * 10 - 5;
-                
-                //ball.XPos = Clamp(ball.XPos, ball.Radius, _board.Width - ball.Radius);
-                //ball.YPos = Clamp(ball.YPos, ball.Radius, _board.Height - ball.Radius);
-                
-                ball.XPos += ball.XVel * deltaTime;
-                ball.YPos += ball.YVel * deltaTime;
+                tasks.Add(Task.Run(() =>
+                {
+                    b1.XPos += b1.XVel * deltaTime;
+                    b1.YPos += b1.YVel * deltaTime;
 
-                if (ball.XPos <= ball.Radius)
-                {
-                    ball.XPos = ball.Radius;
-                    ball.XVel *= -1;
-                }
-                else if (ball.XPos >= board.Width - ball.Radius)
-                {
-                    ball.XPos = board.Width - ball.Radius;
-                    ball.XVel *= -1;
-                }
-
-                if (ball.YPos <= ball.Radius)
-                {
-                    ball.YPos = ball.Radius;
-                    ball.YVel *= -1;
-                }
-                else if (ball.YPos >= board.Height - ball.Radius)
-                {
-                    ball.YPos = board.Height - ball.Radius;
-                    ball.YVel *= -1;
-                }
-
-                foreach (var ball2 in repository.GetAllBalls())
-                {
-                    if (ball.Equals(ball2)) continue;
-                    var dx = ball.XPos - ball2.XPos;
-                    var dy = ball.YPos - ball2.YPos;
-                    var distanceSquared = dx * dx + dy * dy;
-                    var radiusSum = ball.Radius + ball2.Radius;
-
-                    if (distanceSquared < radiusSum * radiusSum)
+                    if (b1.XPos <= b1.Radius)
                     {
-                        HandleCollision(ball, ball2);
+                        b1.XPos = b1.Radius;
+                        b1.XVel *= -1;
                     }
-                        
-                        
-                }
+                    else if (b1.XPos >= board.Width - b1.Radius)
+                    {
+                        b1.XPos = board.Width - b1.Radius;
+                        b1.XVel *= -1;
+                    }
+
+                    if (b1.YPos <= b1.Radius)
+                    {
+                        b1.YPos = b1.Radius;
+                        b1.YVel *= -1;
+                    }
+                    else if (b1.YPos >= board.Height - b1.Radius)
+                    {
+                        b1.YPos = board.Height - b1.Radius;
+                        b1.YVel *= -1;
+                    }
+
+                    foreach (var b2 in repository.GetAllBalls())
+                    {
+                        if (b1.Equals(b2)) continue;
+                        var dx = b1.XPos - b2.XPos;
+                        var dy = b1.YPos - b2.YPos;
+                        var distanceSquared = dx * dx + dy * dy;
+                        var radiusSum = b1.Radius + b2.Radius;
+
+                        if (distanceSquared < radiusSum * radiusSum)
+                        {
+                            HandleCollision(b1, b2);
+                        }
+                    }
                 
-                BallMoved?.Invoke(this, new BallMovedEventArgs(ball.Id, ball.XPos, ball.YPos));
+                    BallMoved?.Invoke(this, new BallMovedEventArgs(b1.Id, b1.XPos, b1.YPos));
+                }));
             }
+            
+            await Task.WhenAll(tasks);
         }
 
         private void HandleCollision(IBall b1, IBall b2)
@@ -134,7 +133,7 @@ namespace Logic.Services
 
                     if (deltaTime >= 0.005)
                     {
-                        UpdatePositions(deltaTime);
+                        Task.Run(async () => await UpdatePositionsAsync(deltaTime));
                         previousTime = currentTime;
                     }
 

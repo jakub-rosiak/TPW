@@ -26,7 +26,6 @@ public class BallDisplay : INotifyPropertyChanged
     
     public double Radius { get; }
     public double Diameter => Radius * 2;
-
     public BallDisplay(int id, double xPos, double yPos, double radius)
     {
         Id = id;

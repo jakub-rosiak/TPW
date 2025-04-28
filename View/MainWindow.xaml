@@ -6,7 +6,7 @@
         xmlns:models="clr-namespace:Model.Models;assembly=Model"
         xmlns:viewModels="clr-namespace:ViewModel.ViewModels;assembly=ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
+        Title="TPW" Height="500" Width="800">
     <Window.DataContext>
         <viewModels:MainViewModel>
             <viewModels:MainViewModel.Model>

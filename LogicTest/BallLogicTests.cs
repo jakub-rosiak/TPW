@@ -23,11 +23,11 @@ namespace LogicTest
         }
 
         [TestMethod]
-        public void UpdatePositions_ShouldKeepBallsInsideBoard()
+        public async Task UpdatePositions_ShouldKeepBallsInsideBoard()
         {
             var logic = CreateLogic(200, 200);
             logic.CreateBalls(10);
-            logic.UpdatePositions(0.1);
+            await logic.UpdatePositionsAsync(0.1);
             foreach (var b in logic.GetBalls())
             {
                 Assert.IsTrue(b.XPos >= b.Radius && b.XPos <= 200 - b.Radius);
@@ -84,18 +84,18 @@ namespace LogicTest
         }
 
         [TestMethod]
-        public void BallMoved_AddAndRemoveHandlers()
+        public async Task BallMoved_AddAndRemoveHandlers()
         {
             var logic = CreateLogic();
             logic.CreateBalls(1);
             var count = 0;
             EventHandler<BallMovedEventArgs> h = (_, __) => Interlocked.Increment(ref count);
             logic.BallMoved += h;
-            logic.UpdatePositions(0.1);
+            await logic.UpdatePositionsAsync(0.1);
             Assert.IsTrue(count > 0);
             count = 0;
             logic.BallMoved -= h;
-            logic.UpdatePositions(0.1);
+            await logic.UpdatePositionsAsync(0.1);
             Assert.AreEqual(0, count);
         }
     }
