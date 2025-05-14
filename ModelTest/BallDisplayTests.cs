@@ -59,5 +59,12 @@ namespace ModelTest
             Assert.IsTrue (radiusProp.CanRead);
             Assert.IsFalse(radiusProp.CanWrite);
         }
+        
+        [TestMethod]
+        public void Diameter_Get_ShouldReturnTwiceRadius()
+        {
+            Assert.AreEqual(8.0, _ball.Diameter);
+        }
+
     }
 }
