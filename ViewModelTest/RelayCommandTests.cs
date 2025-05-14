@@ -6,13 +6,6 @@ namespace ViewModelTest
     public sealed class RelayCommandTests
     {
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void Constructor_NullAction_ShouldThrow()
-        {
-            new RelayCommand(null);
-        }
-
-        [TestMethod]
         public void CanExecute_NoCanExecuteProvided_ShouldReturnTrue()
         {
             var cmd = new RelayCommand(_ => { });
@@ -46,5 +39,12 @@ namespace ViewModelTest
             cmd.RaiseCanExecuteChanged();
             Assert.IsTrue(fired);
         }
+        
+        [TestMethod]
+        public void Constructor_NullAction_ShouldThrow()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new RelayCommand(null as Action<object?>));
+        }
+
     }
 }
