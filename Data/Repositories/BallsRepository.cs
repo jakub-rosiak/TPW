@@ -5,25 +5,38 @@ namespace Data.Repositories
     public class BallsRepository : IBallsRepository
     {
         private readonly List<IBall> _balls = new();
+        private readonly object _lock = new object();
 
         public void AddBall(IBall ball)
         {
-            _balls.Add(ball);
+            lock (_lock)
+            {
+                _balls.Add(ball);
+            }
         }
 
         public void RemoveBall(IBall ball)
         {
-            _balls.Remove(ball);
+            lock (_lock)
+            { 
+                _balls.Remove(ball);
+            }
         }
 
         public IEnumerable<IBall> GetAllBalls()
         {
-            return _balls;
+            lock (_lock)
+            {
+                return _balls.ToList();
+            }
         }
 
         public void Clear()
         {
-            _balls.Clear();
+            lock (_lock)
+            {
+                _balls.Clear();
+            }
         }
     }
 }

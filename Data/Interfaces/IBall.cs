@@ -9,4 +9,7 @@ public interface IBall
     double YVel { get; set; }
     double Radius { get; }
     double Mass { get; }
+    
+    public void Move(double deltaTime);
+    public void AddForce(double x, double y);
 }

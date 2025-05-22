@@ -22,5 +22,17 @@ namespace Data.Models
             XVel = 0;
             YVel = 0;
         }
+
+        public void AddForce(double x, double y)
+        {
+            XVel += x;
+            YVel += y;
+        }
+
+        public void Move(double deltaTime)
+        {
+            XPos += XVel * deltaTime;
+            YPos += YVel * deltaTime;
+        }
     }
 }

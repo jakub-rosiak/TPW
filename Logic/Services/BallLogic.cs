@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Logic.Events;
 using Logic.Interfaces;
@@ -19,14 +20,13 @@ namespace Logic.Services
             for (int i = 0; i < initialCount; i++)
             {
                 Console.WriteLine($"Creating ball at ({i + 1}/{initialCount})");
-                double mass = RandomDouble(20, 100);
-                double radius = RandomDouble(10, 30);
+                double mass = RandomDouble(20, 50);
+                double radius = mass / 2;
                 double xPos = _random.NextDouble() * (board.Width - 2 * radius) + radius;
                 double yPos = _random.NextDouble() * (board.Height - 2 * radius) + radius;
                 double xVel = RandomDouble(-500, 500);
                 double yVel = RandomDouble(-500, 500);
-
-                Console.WriteLine($"Creating ball at ({xPos}, {yPos})");
+                
                 IBall ball = new Ball(i, xPos, yPos, radius, mass);
                 ball.XVel = xVel;
                 ball.YVel = yVel;
@@ -36,61 +36,75 @@ namespace Logic.Services
         
         public async Task UpdatePositionsAsync(double deltaTime)
         {
-            var tasks = new List<Task>();
-
-            foreach (var b1 in repository.GetAllBalls())
+            var allBalls = repository.GetAllBalls().ToList();
+            await Task.Run(() =>
             {
-                tasks.Add(Task.Run(() =>
+                Parallel.ForEach(allBalls, b1 =>
                 {
-                    b1.XPos += b1.XVel * deltaTime;
-                    b1.YPos += b1.YVel * deltaTime;
-
-                    if (b1.XPos <= b1.Radius)
+                    lock (b1)
                     {
-                        b1.XPos = b1.Radius;
-                        b1.XVel *= -1;
+                        b1.Move(deltaTime);
+                        HandleBoundaryCollision(b1);
+                        BallMoved?.Invoke(this, new BallMovedEventArgs(b1.Id, b1.XPos, b1.YPos));
                     }
-                    else if (b1.XPos >= board.Width - b1.Radius)
-                    {
-                        b1.XPos = board.Width - b1.Radius;
-                        b1.XVel *= -1;
-                    }
+                });
 
-                    if (b1.YPos <= b1.Radius)
+                Parallel.For(0, allBalls.Count, i =>
+                {
+                    for (int j = i + 1; j < allBalls.Count; j++)
                     {
-                        b1.YPos = b1.Radius;
-                        b1.YVel *= -1;
-                    }
-                    else if (b1.YPos >= board.Height - b1.Radius)
-                    {
-                        b1.YPos = board.Height - b1.Radius;
-                        b1.YVel *= -1;
-                    }
+                        var b1 = allBalls[i];
+                        var b2 = allBalls[j];
 
-                    foreach (var b2 in repository.GetAllBalls())
-                    {
-                        if (b1.Equals(b2)) continue;
-                        var dx = b1.XPos - b2.XPos;
-                        var dy = b1.YPos - b2.YPos;
-                        var distanceSquared = dx * dx + dy * dy;
-                        var radiusSum = b1.Radius + b2.Radius;
-
-                        if (distanceSquared < radiusSum * radiusSum)
+                        lock (b1)
+                        lock (b2)
                         {
-                            HandleCollision(b1, b2);
+                            if (IsColliding(b1, b2))
+                            {
+                                HandleCollision(b1, b2);
+                            }
                         }
                     }
-                
-                    BallMoved?.Invoke(this, new BallMovedEventArgs(b1.Id, b1.XPos, b1.YPos));
-                }));
+                });
+            });
+        }
+
+        private void HandleBoundaryCollision(IBall b1)
+        {
+            if (b1.XPos <= b1.Radius)
+            {
+                b1.XPos = b1.Radius;
+                b1.XVel *= -1;
             }
-            
-            await Task.WhenAll(tasks);
+            else if (b1.XPos >= board.Width - b1.Radius)
+            {
+                b1.XPos = board.Width - b1.Radius;
+                b1.XVel *= -1;
+            }
+
+            if (b1.YPos <= b1.Radius)
+            {
+                b1.YPos = b1.Radius;
+                b1.YVel *= -1;
+            }
+            else if (b1.YPos >= board.Height - b1.Radius)
+            {
+                b1.YPos = board.Height - b1.Radius;
+                b1.YVel *= -1;
+            }
+        }
+
+        private bool IsColliding(IBall b1, IBall b2)
+        {
+            var dx = b1.XPos - b2.XPos;
+            var dy = b1.YPos - b2.YPos;
+            var distanceSquared = dx * dx + dy * dy;
+            var radiusSum = b1.Radius + b2.Radius;
+            return distanceSquared < radiusSum * radiusSum;
         }
 
         private void HandleCollision(IBall b1, IBall b2)
         {
-            Console.WriteLine($"Collision: {b1.Id}, {b2.Id}");
             double dx = b1.XPos - b2.XPos;
             double dy = b1.YPos - b2.YPos;
             double dvx = b1.XVel - b2.XVel;
@@ -107,10 +121,12 @@ namespace Logic.Services
             double fx = collisionScale * dx;
             double fy = collisionScale * dy;
 
-            b1.XVel -= fx * b2.Mass;
-            b1.YVel -= fy * b2.Mass;
-            b2.XVel += fx * b1.Mass;
-            b2.YVel += fy * b1.Mass;
+            var b1XVel= -(fx * b2.Mass);
+            var b1YVel = -(fy * b2.Mass);
+            var b2XVel = fx * b1.Mass;
+            var b2YVel = fy * b1.Mass;
+            b1.AddForce(b1XVel, b1YVel);
+            b2.AddForce(b2XVel, b2YVel);
 
         }
 
@@ -156,8 +172,6 @@ namespace Logic.Services
         {
             return repository.GetAllBalls();
         }
-        
-        private static double Clamp(double value, double min, double max) => Math.Max(min, Math.Min(max, value));
         
         private double RandomDouble(double min, double max) => _random.NextDouble() * (max - min) + min;
     }
