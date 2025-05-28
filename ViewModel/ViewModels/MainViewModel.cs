@@ -9,20 +9,21 @@ namespace ViewModel.ViewModels;
 
 public class MainViewModel : INotifyPropertyChanged
 {
-    private IBallSimulationModel _model;
+    private IBallSimulationModel? _model;
 
     public BoardDisplay Board { get; }
     public IBallSimulationModel Model
     {
-        get => _model;
+        get => _model ?? throw new NullReferenceException("Model is null");
         set
         {
             _model = value;
             OnPropertyChanged(nameof(Model));
+            OnPropertyChanged(nameof(Balls));
         }
     }
 
-    public ObservableCollection<BallDisplay> Balls => _model.Balls;
+    public ObservableCollection<BallDisplay> Balls => _model?.Balls ?? new ObservableCollection<BallDisplay>();
 
     private int _ballCount;
 
@@ -47,16 +48,15 @@ public class MainViewModel : INotifyPropertyChanged
 
     public MainViewModel()
     {
-        _model = new BallSimulationModel();
         
         Board = new BoardDisplay(800, 600);
         
-        _startSimulationCommand = new RelayCommand(_ => _model.StartSimulation(), _ => Balls.Any());
-        _stopSimulationCommand = new RelayCommand(_ => _model.StopSimulation(), _ => Balls.Any());
+        _startSimulationCommand = new RelayCommand(_ => _model?.StartSimulation(), _ => Balls.Any());
+        _stopSimulationCommand = new RelayCommand(_ => _model?.StopSimulation(), _ => Balls.Any());
         
         _createBallsCommand = new RelayCommand(_ =>
         {
-            _model.CreateBalls(BallCount);
+            _model?.CreateBalls(BallCount);
             _startSimulationCommand.RaiseCanExecuteChanged();
             _stopSimulationCommand.RaiseCanExecuteChanged();
         }, _ => BallCount > 0);

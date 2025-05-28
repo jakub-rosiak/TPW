@@ -12,14 +12,16 @@ public class BallSimulationModel : IBallSimulationModel
 {
     private readonly IBallLogic _logic;
     private readonly Board _board;
+    private readonly ILogger _logger;
     public ObservableCollection<BallDisplay> Balls { get; } = new();
 
     public event EventHandler? BallsChanged;
 
     public BallSimulationModel()
     {
+        _logger = new Logger();
         _board = new Board(800, 600);
-        _logic = new BallLogic(new BallsRepository(), new Board(800, 600));
+        _logic = new BallLogic(new BallsRepository(), _board, _logger);
         _logic.BallMoved += OnBallMoved;
     }
     
@@ -36,11 +38,15 @@ public class BallSimulationModel : IBallSimulationModel
 
     public void StartSimulation()
     {
-        Console.WriteLine("Starting simulation");
+        _logger.Debug("Starting simulation");
         _logic.Start();
     }
 
-    public void StopSimulation() => _logic.Stop();
+    public void StopSimulation()
+    {
+        _logger.Debug("Stopping simulation");
+        _logic.Stop();
+    }
 
     private void OnBallMoved(object? sender, BallMovedEventArgs e)
     {
