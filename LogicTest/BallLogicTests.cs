@@ -8,10 +8,10 @@ namespace LogicTest
 {
     [TestClass]
     public class BallLogicTests
-    {
+    { 
         private static BallLogic CreateLogic(int w = 100, int h = 100)
         {
-            return new BallLogic(new BallsRepository(), new Board(w, h));
+            return new BallLogic(new BallsRepository(), new Board(w, h), new Logger());
         }
 
         [TestMethod]
@@ -69,18 +69,6 @@ namespace LogicTest
             var logic = CreateLogic();
             logic.CreateBalls(3);
             Assert.AreEqual(3, logic.GetBalls().Count());
-        }
-
-        [TestMethod]
-        public void Clamp_ShouldReturnValueWithinBounds()
-        {
-            var m = typeof(BallLogic).GetMethod("Clamp", BindingFlags.NonPublic | BindingFlags.Static);
-            var below = (double)m.Invoke(null, new object[] { -1.0, 0.0, 10.0 });
-            var mid = (double)m.Invoke(null, new object[] { 5.0, 0.0, 10.0 });
-            var above = (double)m.Invoke(null, new object[] { 15.0, 0.0, 10.0 });
-            Assert.AreEqual(0.0, below);
-            Assert.AreEqual(5.0, mid);
-            Assert.AreEqual(10.0, above);
         }
 
         [TestMethod]

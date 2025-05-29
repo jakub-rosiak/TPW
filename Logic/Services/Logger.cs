@@ -13,7 +13,7 @@ public enum LogLevel
 public class Logger : ILogger
 {
     private readonly string _logFilePath;
-    private readonly object _lock = new object();
+    private static readonly object _lock = new object();
 
     public Logger()
     {
