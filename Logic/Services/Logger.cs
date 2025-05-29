@@ -1,4 +1,5 @@
-﻿using Logic.Interfaces;
+﻿using Data.Interfaces;
+using Logic.Interfaces;
 
 namespace Logic.Services;
 
@@ -27,6 +28,15 @@ public class Logger : ILogger
         }
 
         _logFilePath = Path.Combine(folder, $"{DateTime.Now:yyyyMMdd}.log");
+        
+        if (File.Exists(_logFilePath))
+        {
+            DateTime logFileDate = File.GetLastWriteTime(_logFilePath);
+            string timestamp = logFileDate.ToString("yyyyMMdd_HHmmss");
+            string backupPath = Path.Combine(folder, $"{timestamp}.log");
+            File.Move(_logFilePath, backupPath);
+        }
+        
         Debug($"Logging to {_logFilePath}");
 
         Task.Run(() =>
@@ -57,6 +67,24 @@ public class Logger : ILogger
     public void Error(string message) => Log(message, LogLevel.Error);
     public void Debug(string message) => Log(message, LogLevel.Debug);
 
+    public void Log(IBall ball)
+    {
+        string message = $"Ball {ball.Id} collided with a wall at x: {Math.Round(ball.XPos, 2)}, y: {Math.Round(ball.YPos, 2)}.";
+        Debug(message);
+    }
+
+    public void Log(IBall b1, IBall b2)
+    {
+        string message = $"Ball {b1.Id} collided with {b2.Id} at x1: {Math.Round(b1.XPos, 2)}, y1: {Math.Round(b1.YPos, 2)}, x2: {Math.Round(b2.XPos, 2)}, y2: {Math.Round(b2.YPos, 2)}.";
+        Debug(message);
+    }
+
+    public void Log(IBall b1, int total)
+    {
+        string message = $"Creating ball at ({b1.Id + 1}/{total}) at x: {Math.Round(b1.XPos, 2)}, y: {Math.Round(b1.YPos, 2)}.";
+        Info(message);
+    }
+    
     private void WriteToFile()
     {
         List<string> bufferCopy = null;

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 using Logic.Events;
 using Logic.Interfaces;
 using Data.Interfaces;
@@ -19,7 +20,6 @@ namespace Logic.Services
             repository.Clear();
             for (int i = 0; i < initialCount; i++)
             {
-                logger.Info($"Creating ball at ({i + 1}/{initialCount})");
                 double mass = RandomDouble(20, 50);
                 double radius = mass / 2;
                 double xPos = _random.NextDouble() * (board.Width - 2 * radius) + radius;
@@ -28,6 +28,7 @@ namespace Logic.Services
                 double yVel = RandomDouble(-500, 500);
                 
                 IBall ball = new Ball(i, xPos, yPos, radius, mass);
+                logger.Log(ball, initialCount);
                 ball.XVel = xVel;
                 ball.YVel = yVel;
                 repository.AddBall(ball);
@@ -61,7 +62,7 @@ namespace Logic.Services
                         {
                             if (IsColliding(b1, b2))
                             {
-                                logger.Debug($"Ball {b1.Id} collided with {b2.Id}.");
+                                logger.Log(b1, b2);
                                 HandleCollision(b1, b2);
                             }
                         }
@@ -74,26 +75,26 @@ namespace Logic.Services
         {
             if (b1.XPos <= b1.Radius)
             {
-                logger.Debug($"Ball {b1.Id} collided with the left wall");
+                logger.Log(b1);
                 b1.XPos = b1.Radius;
                 b1.XVel *= -1;
             }
             else if (b1.XPos >= board.Width - b1.Radius)
             {
-                logger.Debug($"Ball {b1.Id} collided with the right wall");
+                logger.Log(b1);
                 b1.XPos = board.Width - b1.Radius;
                 b1.XVel *= -1;
             }
 
             if (b1.YPos <= b1.Radius)
             {
-                logger.Debug($"Ball {b1.Id} collided with the top wall");
+                logger.Log(b1);
                 b1.YPos = b1.Radius;
                 b1.YVel *= -1;
             }
             else if (b1.YPos >= board.Height - b1.Radius)
             {
-                logger.Debug($"Ball {b1.Id} collided with the bottom wall");
+                logger.Log(b1);
                 b1.YPos = board.Height - b1.Radius;
                 b1.YVel *= -1;
             }
