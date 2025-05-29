@@ -14,6 +14,7 @@ public class Logger : ILogger
 {
     private readonly string _logFilePath;
     private static readonly object _lock = new object();
+    private List<string> buffer = new List<string>();
 
     public Logger()
     {
@@ -50,15 +51,22 @@ public class Logger : ILogger
         }
         Console.WriteLine(logEntry);
         Console.ForegroundColor = originalColor;
-
+        
         lock (_lock)
         {
-            File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
+            buffer.Add(logEntry);
+
+            if (buffer.Count > 10)
+            {
+                File.AppendAllText(_logFilePath, string.Join(Environment.NewLine, buffer) + Environment.NewLine);
+                buffer.Clear();
+            }
         }
+        
     }
     
     public void Info(string message) => Log(message, LogLevel.Info);
     public void Warn(string message) => Log(message, LogLevel.Warning);
-    public void Error(String message) => Log(message, LogLevel.Error);
-    public void Debug(String message) => Log(message, LogLevel.Debug);
+    public void Error(string message) => Log(message, LogLevel.Error);
+    public void Debug(string message) => Log(message, LogLevel.Debug);
 }
