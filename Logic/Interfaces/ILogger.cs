@@ -9,4 +9,5 @@ public interface ILogger
     void Warn(String message);
     void Error(String message);
     void Debug(String message);
+    void Stop();
 }
