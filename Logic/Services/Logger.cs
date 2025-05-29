@@ -44,25 +44,7 @@ public class Logger : ILogger
     public void Log(string message, LogLevel level = LogLevel.Info)
     {
         string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level}] {message}";
-        
-        ConsoleColor originalColor = Console.ForegroundColor;
-        switch (level)
-        {
-            case LogLevel.Warning:
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                break;
-            case LogLevel.Error:
-                Console.ForegroundColor = ConsoleColor.Red;
-                break;
-            case LogLevel.Debug:
-                Console.ForegroundColor = ConsoleColor.White;
-                break;
-            default:
-                Console.ForegroundColor = originalColor;
-                break;
-        }
         Console.WriteLine(logEntry);
-        Console.ForegroundColor = originalColor;
 
         lock (_lock)
         {
