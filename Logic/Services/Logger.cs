@@ -58,9 +58,22 @@ public class Logger : ILogger
 
             if (buffer.Count > 10)
             {
-                File.AppendAllText(_logFilePath, string.Join(Environment.NewLine, buffer) + Environment.NewLine);
-                buffer.Clear();
+                try
+                {
+                    if (!File.Exists(_logFilePath))
+                    {
+                        using (File.Create(_logFilePath)) { }
+                    }
+        
+                    File.AppendAllText(_logFilePath, string.Join(Environment.NewLine, buffer) + Environment.NewLine);
+                    buffer.Clear();
+                }
+                catch (Exception ex)
+                {
+                   Error($"Błąd zapisu loga: {ex.Message}");
+                }
             }
+
         }
         
     }
